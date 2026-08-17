@@ -170,7 +170,7 @@ class Inspector
         $timeMid = substr($hex, 8, 4);
         $timeLow = substr($hex, 12, 4);
 
-        $timestampHex = substr($timeHigh, 1) . $timeMid . $timeLow;
+        $timestampHex = $timeHigh . $timeMid . substr($timeLow, 1);
         $timestamp = hexdec($timestampHex);
 
         return [
