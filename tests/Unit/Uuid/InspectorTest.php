@@ -59,12 +59,21 @@ final class InspectorTest extends TestCase
      */
     public function test_metadataIncludesExpectedKeysForVersion1(): void
     {
+        $gregorianOffset = 0x01B21DD213814000;
+        $before = (int) (microtime(true) * 1_000_000) * 10 + $gregorianOffset;
         $uuid = UuidV1::generate();
+        $after = (int) (microtime(true) * 1_000_000) * 10 + $gregorianOffset;
         $metadata = Inspector::analyze((string) $uuid)->metadata();
 
         $this->assertArrayHasKey('timestamp_100ns', $metadata);
         $this->assertArrayHasKey('clock_sequence', $metadata);
         $this->assertArrayHasKey('node', $metadata);
+
+        // A wrong-field bit-layout bug is off by many orders of magnitude, not
+        // by mere clock jitter, so a generous window still catches it.
+        $window = 600_000_000; // 60s in 100ns units
+        $this->assertGreaterThanOrEqual($before - $window, $metadata['timestamp_100ns']);
+        $this->assertLessThanOrEqual($after + $window, $metadata['timestamp_100ns']);
     }
 
     /**
@@ -77,6 +86,8 @@ final class InspectorTest extends TestCase
 
         $this->assertArrayHasKey('domain', $metadata);
         $this->assertArrayHasKey('local_identifier', $metadata);
+        $this->assertSame('POSIX UID', $metadata['domain']);
+        $this->assertSame(42, $metadata['local_identifier']);
     }
 
     public function test_metadataIncludesExpectedKeysForVersion3and5(): void
@@ -149,11 +160,17 @@ final class InspectorTest extends TestCase
      */
     public function test_metadataIncludesExpectedKeysForVersion7(): void
     {
+        $before = (int) (microtime(true) * 1000);
         $uuid = UuidV7::generate();
+        $after = (int) (microtime(true) * 1000);
         $metadata = Inspector::analyze((string) $uuid)->metadata();
 
         $this->assertArrayHasKey('unix_timestamp_ms', $metadata);
         $this->assertArrayHasKey('sortable', $metadata);
+
+        $window = 60_000; // 60s in ms
+        $this->assertGreaterThanOrEqual($before - $window, $metadata['unix_timestamp_ms']);
+        $this->assertLessThanOrEqual($after + $window, $metadata['unix_timestamp_ms']);
     }
 
     /**
