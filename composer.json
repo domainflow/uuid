@@ -11,16 +11,16 @@
     }
   ],
   "require": {
-    "php": "^8.3||^8.4"
+    "php": "^8.4"
   },
   "require-dev": {
-    "friendsofphp/php-cs-fixer": "^3.75",
+    "friendsofphp/php-cs-fixer": "^3.95",
     "mikey179/vfsstream": "^1.6",
-    "nikic/php-parser": "^5.4",
-    "phpstan/phpstan": "^2.1",
+    "nikic/php-parser": "^5.7",
+    "phpstan/phpstan": "^2.2",
     "phpstan/phpstan-deprecation-rules": "^2.0",
-    "phpunit/phpunit": "^12.0",
-    "symfony/phpunit-bridge": "^7.2"
+    "phpunit/phpunit": "^12.5",
+    "symfony/phpunit-bridge": "^7.4"
   },
   "autoload": {
     "psr-4": {
@@ -33,19 +33,49 @@
     }
   },
   "scripts": {
-    "test": "./vendor/bin/phpunit --testsuite=Unit -c phpunit.xml",
-    "test-integration": "./vendor/bin/phpunit --testsuite=Integration -c phpunit.xml",
-    "test-all": "./vendor/bin/phpunit -c phpunit.xml",
-    "code-coverage": [
+    "test": [
       "@putenv XDEBUG_MODE=coverage",
-      "./vendor/bin/phpunit -c phpunit.xml --testsuite=Unit --coverage-html=build/coverage"
+      "./vendor/bin/phpunit --testsuite=Unit -c phpunit.xml"
     ],
+    "test-integration": [
+      "@putenv XDEBUG_MODE=coverage",
+      "./vendor/bin/phpunit --testsuite=Integration -c phpunit.xml"
+    ],
+    "test-all": [
+      "@putenv XDEBUG_MODE=coverage",
+      "./vendor/bin/phpunit -c phpunit.xml"
+    ],
+    "test:coverage": [
+      "@putenv XDEBUG_MODE=coverage",
+      "./vendor/bin/phpunit -c phpunit.xml --coverage-html=build/testcoverage"
+    ],
+    "code-coverage": "@test:coverage",
     "phpstan": "./vendor/bin/phpstan analyse -c phpstan.neon",
-    "fix": [
-      "./vendor/bin/php-cs-fixer fix src tests --config=./php_cs.dist.php"
+    "lint": "./vendor/bin/php-cs-fixer check src tests --config=./php_cs.dist.php --diff",
+    "format": "./vendor/bin/php-cs-fixer fix src tests --config=./php_cs.dist.php",
+    "fix": "@format",
+    "quality": [
+      "@composer validate --strict --no-check-publish --no-check-lock",
+      "@lint",
+      "@phpstan",
+      "@test:coverage",
+      "@composer audit"
     ]
   },
+  "scripts-descriptions": {
+    "test": "Run the PHPUnit unit suite",
+    "test-integration": "Run the PHPUnit integration suite",
+    "test-all": "Run the complete PHPUnit suite",
+    "test:coverage": "Run the complete suite with line-coverage reporting",
+    "code-coverage": "Alias for test:coverage",
+    "phpstan": "Run static analysis",
+    "lint": "Check PHP formatting without modifying files",
+    "format": "Apply PHP formatting fixes",
+    "quality": "Run every mandatory package quality gate"
+  },
   "config": {
+    "preferred-install": "dist",
+    "sort-packages": true,
     "minimum-stability": "stable",
     "optimize-autoloader": true
   }
