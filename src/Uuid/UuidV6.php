@@ -58,7 +58,9 @@ final readonly class UuidV6 implements UuidInterface
         $clockSeqHi = ($clockSeq >> 8) & 0x3f | 0x80;  // variant bits: 10xxxxxx
         $clockSeqLow = $clockSeq & 0xff;
 
-        $node = bin2hex(random_bytes(6)); // 48-bit node (usually MAC)
+        $nodeBytes = random_bytes(6);
+        $nodeBytes[0] = chr((ord($nodeBytes[0]) | 0x01) & 0xFF); // RFC 4122 §4.5: multicast bit for a random node
+        $node = bin2hex($nodeBytes);
 
         $uuid = sprintf(
             '%s-%s-%s-%02x%02x-%s',
