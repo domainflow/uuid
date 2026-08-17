@@ -10,7 +10,7 @@ use InvalidArgumentException;
 use Random\RandomException;
 
 /**
- * Implements a random-based UUID (version 1).
+ * Implements a time-based UUID (version 1).
  */
 final readonly class UuidV1 implements UuidInterface
 {

@@ -10,7 +10,7 @@ use InvalidArgumentException;
 use Random\RandomException;
 
 /**
- * Implements a random-based UUID (version 2).
+ * Implements a DCE Security (domain-based) UUID (version 2).
  */
 final readonly class UuidV2 implements UuidInterface
 {
