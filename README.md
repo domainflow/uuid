@@ -1,24 +1,26 @@
-#  DomainFlow Uuid
+# DomainFlow Uuid
+
 [![Tests](https://github.com/domainflow/uuid/actions/workflows/tests.yml/badge.svg)](https://github.com/domainflow/uuid/actions/workflows/tests.yml)
 ![Packagist Version](https://img.shields.io/packagist/v/domainflow/uuid)
 ![PHP Version](https://img.shields.io/packagist/php-v/domainflow/uuid)
 ![License](https://img.shields.io/github/license/domainflow/uuid)
 ![PHPStan](https://img.shields.io/badge/PHPStan-Level%209-brightgreen.svg)
 
-A fully featured, **immutable UUID library** supporting all **RFC versions 1–8**, including validation, generation, metadata inspection, and JSON serialization.
+An immutable UUID library for PHP supporting RFC versions 1–8, including generation, validation, metadata inspection, and JSON serialization.
+
+---
+
+## ⚙️ Requirements
+
+- **PHP 8.4 or 8.5**
 
 ---
 
 ## ✨ Highlights
 
-- ✅ Supports all UUID versions (v1–v8)
-- ✅ Immutable, `final readonly` classes
-- ✅ Inspector tool for version/variant/metadata extraction
----
-
-## ⚙️ Requirements
-
-- **PHP 8.3+**
+- Supports all UUID versions (v1–v8)
+- Immutable, `final readonly` value objects
+- `Inspector` for version/variant/metadata extraction from arbitrary UUID strings
 
 ---
 
@@ -30,9 +32,9 @@ composer require domainflow/uuid
 
 ---
 
-## 🚀 Usage
+## 🧪 Usage
 
-### 🔧 Generate UUIDs
+### Generate UUIDs
 
 ```php
 use DomainFlow\Uuid\{UuidV1, UuidV2, UuidV3, UuidV4, UuidV5, UuidV6, UuidV7, UuidV8};
@@ -47,9 +49,7 @@ UuidV7::generate();                     // Unix timestamp UUID (v7)
 UuidV8::generate();                     // Application-defined/custom UUID (v8)
 ```
 
----
-
-### 🔍 Inspect a UUID
+### Inspect a UUID
 
 ```php
 use DomainFlow\Uuid\Inspector;
@@ -62,30 +62,29 @@ $inspector->metadata();  // array with version-specific data
 
 ---
 
-## 📘 Parameters Explained
+## Parameters
 
 ### `UuidV2::generate(int $localId, string $domain)`
+
 - `$localId`: Typically a UID or GID (`getmyuid()`, `getmygid()`)
 - `$domain`: Either `'uid'` or `'gid'`
 
-### `UuidV3` / `UuidV5`
-```php
-UuidV3::generate(string $namespace, string $name);
-UuidV5::generate(string $namespace, string $name);
-```
-- `$namespace`: A valid UUID string (e.g., DNS namespace `6ba7b810-9dad-11d1-80b4-00c04fd430c8`)
+### `UuidV3::generate(string $namespace, string $name)` / `UuidV5::generate(string $namespace, string $name)`
+
+- `$namespace`: A valid UUID string (e.g. the DNS namespace `6ba7b810-9dad-11d1-80b4-00c04fd430c8`)
 - `$name`: Any string (email, file path, identifier)
 
 ---
 
-## 🔒 Trait & Interface
+## Trait & Interface
 
 All UUID classes implement:
+
 - `UuidInterface` — common contract for all versions
 - `UuidMethodsTrait` — shared implementation (`equals()`, `fromString()`, `fromJson()`, etc.)
 
 ---
 
-## 📄 License
+## 🛡 License
 
-[MIT](LICENSE)
+**DomainFlow Uuid** is open-sourced software licensed under the [MIT license](LICENSE).
