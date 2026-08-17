@@ -10,7 +10,7 @@ use InvalidArgumentException;
 use Random\RandomException;
 
 /**
- * Implements a random-based UUID (version 2).
+ * Implements a DCE Security (domain-based) UUID (version 2).
  */
 final readonly class UuidV2 implements UuidInterface
 {
@@ -57,19 +57,21 @@ final readonly class UuidV2 implements UuidInterface
         $timeHigh = ($timestamp >> 48) & 0x0FFF;
         $timeHigh |= 0x2000; // Set version to 2
 
-        $clockSeq = random_int(0, 0x3FFF);
-        $clockSeq |= 0x8000; // RFC variant
+        // DCE 1.1: clock_seq_low is replaced by the domain byte, so only
+        // clock_seq_hi carries random bits (plus the RFC 4122 variant).
+        $clockSeqHi = random_int(0, 0x3F) | 0x80;
+        $clockSeqLow = $domainValue;
 
         $node = bin2hex(random_bytes(6));
 
         $uuid = sprintf(
-            '%08x-%04x-%04x-%04x-%02x%s',
+            '%08x-%04x-%04x-%02x%02x-%s',
             $timeLow,
             $timeMid,
             $timeHigh,
-            $clockSeq,
-            $domainValue,
-            substr($node, 2) // Skip first byte (used for domain)
+            $clockSeqHi,
+            $clockSeqLow,
+            $node
         );
 
         return new self($uuid);

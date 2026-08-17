@@ -10,7 +10,7 @@ use InvalidArgumentException;
 use Random\RandomException;
 
 /**
- * Implements a random-based UUID (version 1).
+ * Implements a time-based UUID (version 1).
  */
 final readonly class UuidV1 implements UuidInterface
 {
@@ -59,7 +59,9 @@ final readonly class UuidV1 implements UuidInterface
         $clockSeqHi = ($clockSeq >> 8) & 0x3f | 0x80; // variant RFC4122
         $clockSeqLow = $clockSeq & 0xff;
 
-        $node = bin2hex(random_bytes(6)); // typically MAC address
+        $nodeBytes = random_bytes(6);
+        $nodeBytes[0] = chr((ord($nodeBytes[0]) | 0x01) & 0xFF); // RFC 4122 §4.5: multicast bit for a random node
+        $node = bin2hex($nodeBytes);
 
         $uuid = sprintf(
             '%s-%s-%s-%02x%02x-%s',

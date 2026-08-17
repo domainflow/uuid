@@ -107,21 +107,21 @@ final class UuidMethodsTraitTest extends TestCase
         $this->assertTrue($uuid->equals($fromJson));
     }
 
-    #[DataProvider('uuidClasses')]
+    #[DataProvider('uuidClassNames')]
     public function test_fromJsonInvalidJson(string $class): void
     {
         $this->expectException(JsonException::class);
         $class::fromJson('{invalid-json}');
     }
 
-    #[DataProvider('uuidClasses')]
+    #[DataProvider('uuidClassNames')]
     public function test_fromJsonValidButNotString(string $class): void
     {
         $this->expectException(JsonException::class);
         $class::fromJson(json_encode(['uuid' => 'not-a-flat-string']));
     }
 
-    #[DataProvider('uuidClasses')]
+    #[DataProvider('uuidClassNames')]
     public function test_fromJsonValidButNotAUuid(string $class): void
     {
         $this->expectException(InvalidArgumentException::class);

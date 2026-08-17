@@ -20,4 +20,17 @@ final class UuidV6Test extends TestCase
         $uuid = UuidV6::generate();
         $this->assertTrue(UuidV6::isValid((string) $uuid));
     }
+
+    /**
+     * @throws RandomException
+     */
+    public function test_generatedNodeHasMulticastBitSet(): void
+    {
+        for ($i = 0; $i < 20; $i++) {
+            $node = substr((string) UuidV6::generate(), -12);
+            $firstNodeByte = hexdec(substr($node, 0, 2));
+
+            $this->assertSame(1, $firstNodeByte & 0x01, "Multicast bit not set on sample #$i");
+        }
+    }
 }
