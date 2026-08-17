@@ -46,14 +46,13 @@ final readonly class UuidV6 implements UuidInterface
         $time = (int) (microtime(true) * 1_000_000); // microseconds
         $uuidTime = $time * 10 + $gregorianEpochOffset;
 
-        $timeHex = str_pad(dechex($uuidTime), 16, '0', STR_PAD_LEFT);
-        $timeHigh = substr($timeHex, 0, 8);// reordered
+        // 60-bit timestamp, reordered per RFC 9562 §5.6: time_high (32) + time_mid (16) + time_low_and_version (12 + 4-bit version).
+        $timeHex = str_pad(dechex($uuidTime), 15, '0', STR_PAD_LEFT);
+        $timeHigh = substr($timeHex, 0, 8);
         $timeMid = substr($timeHex, 8, 4);
-        $timeLow = substr($timeHex, 12, 4); // contains version bits
+        $timeLow = substr($timeHex, 12, 3); // low 12 bits of the timestamp; no bits are lost to the version nibble
 
-        $timeLowInt = hexdec($timeLow);
-        $timeLowInt = ($timeLowInt & 0x0fff) | 0x6000; // version 6
-        $timeLow = str_pad(dechex($timeLowInt), 4, '0', STR_PAD_LEFT);
+        $timeLow = '6' . $timeLow; // version 6
 
         $clockSeq = random_int(0, 0x3FFF); // 14-bit
         $clockSeqHi = ($clockSeq >> 8) & 0x3f | 0x80;  // variant bits: 10xxxxxx
